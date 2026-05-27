@@ -1039,7 +1039,7 @@ function renderPrepCards(systemId) {
 
     const prepNote = document.createElement("p");
     prepNote.className = "print-prep-note";
-    prepNote.textContent = `Preparation: ${riddle.prep}`;
+    prepNote.textContent = riddle.place;
 
     card.append(badge, title, riddleCopy, hint, secret, prepNote);
 
