@@ -141,6 +141,37 @@ const GENERATED_PREP_ENDS = [
   "Verifie que la note ne tombe pas quand on passe a cote.",
 ];
 
+const UNKNOWN_LANGUAGE_ALPHABET = [
+  ["A", "ka"],
+  ["B", "zu"],
+  ["C", "mi"],
+  ["D", "ra"],
+  ["E", "lo"],
+  ["F", "ta"],
+  ["G", "ne"],
+  ["H", "vo"],
+  ["I", "si"],
+  ["J", "pu"],
+  ["K", "xi"],
+  ["L", "do"],
+  ["M", "fi"],
+  ["N", "ga"],
+  ["O", "re"],
+  ["P", "jo"],
+  ["Q", "hu"],
+  ["R", "la"],
+  ["S", "be"],
+  ["T", "mo"],
+  ["U", "ki"],
+  ["V", "sa"],
+  ["W", "yo"],
+  ["X", "tri"],
+  ["Y", "zen"],
+  ["Z", "lum"],
+];
+
+const unknownLanguageMap = new Map(UNKNOWN_LANGUAGE_ALPHABET);
+
 const wheelOutcomes = [
   {
     label: "JOKER",
@@ -223,6 +254,8 @@ const progressFill = document.querySelector("#progress-fill");
 const chapterLabel = document.querySelector("#chapter-label");
 const roomTitle = document.querySelector("#room-title");
 const riddleText = document.querySelector("#riddle-text");
+const cipherPanel = document.querySelector("#cipher-panel");
+const cipherGrid = document.querySelector("#cipher-grid");
 const hintBox = document.querySelector("#hint-box");
 const hintText = document.querySelector("#hint-text");
 const wheelPanel = document.querySelector("#wheel-panel");
@@ -293,6 +326,59 @@ function fillGeneratedTemplate(template, place, secret) {
   return template.replaceAll("{place}", place).replaceAll("{secret}", titleCaseSecret(secret));
 }
 
+function normalizeCipherLetter(value) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
+}
+
+function encodeUnknownWord(word) {
+  const pieces = [];
+
+  Array.from(word).forEach((char) => {
+    const normalized = normalizeCipherLetter(char);
+    const code = unknownLanguageMap.get(normalized);
+
+    if (code) {
+      pieces.push(code);
+      return;
+    }
+
+    if (/[0-9]/.test(char)) {
+      pieces.push(char);
+      return;
+    }
+
+    if (pieces.length) {
+      pieces[pieces.length - 1] += char;
+      return;
+    }
+
+    pieces.push(char);
+  });
+
+  return pieces.join("-");
+}
+
+function encodeUnknownText(value) {
+  return String(value ?? "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(encodeUnknownWord)
+    .join(" / ");
+}
+
+function renderCipherKey(container) {
+  container.innerHTML = "";
+
+  UNKNOWN_LANGUAGE_ALPHABET.forEach(([letter, code]) => {
+    const item = document.createElement("span");
+    item.textContent = `${code}=${letter}`;
+    container.appendChild(item);
+  });
+}
+
 function randomIndex(max) {
   if (max <= 1) return 0;
 
@@ -318,6 +404,7 @@ function createDefaultRiddle(systemIndex, riddleIndex, place) {
 
   return {
     enabled: true,
+    unknownMode: false,
     place,
     title: fillTemplate(TITLE_TEMPLATES[titleIndex], place),
     riddle: fillTemplate(RIDDLE_TEMPLATES[templateIndex], place),
@@ -348,6 +435,7 @@ function normalizeRiddle(raw, fallback) {
 
   return {
     enabled: raw?.enabled === undefined ? fallback.enabled !== false : Boolean(raw.enabled),
+    unknownMode: Boolean(raw?.unknownMode ?? fallback.unknownMode),
     place,
     title: cleanText(raw?.title, fallback.title),
     riddle: cleanText(raw?.riddle, fallback.riddle),
@@ -725,6 +813,7 @@ function renderCurrentRiddle() {
   }
 
   const riddle = riddles[state.current];
+  const usesUnknownLanguage = riddle.unknownMode === true;
   const done = state.found.length;
   const spinKey = getSpinKey(system.id, riddle.sourceIndex);
   const spin = state.wheelSpins[spinKey];
@@ -733,10 +822,17 @@ function renderCurrentRiddle() {
   scoreLabel.textContent = `${done} cle${done > 1 ? "s" : ""} trouvee${done > 1 ? "s" : ""}`;
   jokerLabel.textContent = `${state.jokers} joker${state.jokers > 1 ? "s" : ""}`;
   progressFill.style.width = `${(done / riddles.length) * 100}%`;
-  chapterLabel.textContent = `${system.name} / ${riddle.place}`;
-  roomTitle.textContent = riddle.title;
-  riddleText.textContent = riddle.riddle;
-  hintText.textContent = riddle.hint;
+  chapterLabel.textContent = `${system.name} / ${usesUnknownLanguage ? "Langage inconnu" : riddle.place}`;
+  roomTitle.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.title) : riddle.title;
+  riddleText.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.riddle) : riddle.riddle;
+  hintText.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.hint) : riddle.hint;
+  roomTitle.classList.toggle("unknown-text", usesUnknownLanguage);
+  riddleText.classList.toggle("unknown-text", usesUnknownLanguage);
+  hintText.classList.toggle("unknown-text", usesUnknownLanguage);
+  cipherPanel.hidden = !usesUnknownLanguage;
+  if (usesUnknownLanguage) {
+    renderCipherKey(cipherGrid);
+  }
   hintBox.hidden = true;
   wheelPanel.hidden = true;
   wheelResult.textContent = spin ? spin.message : "Tournez la roue une fois par enigme.";
@@ -865,29 +961,44 @@ function renderPrepCards(systemId) {
   }
 
   riddles.forEach((riddle, index) => {
+    const usesUnknownLanguage = riddle.unknownMode === true;
     const card = document.createElement("article");
     card.className = "prep-card print-clue-card";
+    card.classList.toggle("unknown-card", usesUnknownLanguage);
 
     const badge = document.createElement("span");
     badge.className = "prep-badge";
-    badge.textContent = `Indice ${String(index + 1).padStart(2, "0")}`;
+    badge.textContent = usesUnknownLanguage
+      ? `Indice ${String(index + 1).padStart(2, "0")} / code`
+      : `Indice ${String(index + 1).padStart(2, "0")}`;
 
     const title = document.createElement("h3");
-    title.textContent = riddle.place;
+    title.classList.toggle("unknown-text", usesUnknownLanguage);
+    title.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.title) : riddle.place;
 
     const riddleCopy = document.createElement("p");
     riddleCopy.className = "print-riddle";
-    riddleCopy.textContent = riddle.riddle;
+    riddleCopy.classList.toggle("unknown-text", usesUnknownLanguage);
+    riddleCopy.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.riddle) : riddle.riddle;
 
     const hint = document.createElement("p");
     hint.className = "print-hint";
-    hint.textContent = `Indice: ${riddle.hint}`;
+    hint.classList.toggle("unknown-text", usesUnknownLanguage);
+    hint.textContent = `Indice: ${usesUnknownLanguage ? encodeUnknownText(riddle.hint) : riddle.hint}`;
 
     const secret = document.createElement("span");
     secret.className = "prep-secret";
     secret.textContent = `Mot a entrer: ${titleCaseSecret(riddle.secret)}`;
 
     card.append(badge, title, riddleCopy, hint, secret);
+
+    if (usesUnknownLanguage) {
+      const printKey = document.createElement("div");
+      printKey.className = "print-cipher-key";
+      renderCipherKey(printKey);
+      card.appendChild(printKey);
+    }
+
     prepGrid.appendChild(card);
   });
 }
@@ -957,6 +1068,7 @@ function regenerateSelectedSystemTexts() {
 
     return {
       enabled: riddle.enabled !== false,
+      unknownMode: riddle.unknownMode === true,
       place,
       secret,
       title: createUniqueGeneratedText(system.id, index, "title", riddle.title, place, secret),
@@ -999,6 +1111,22 @@ function createIncludeToggle(riddle) {
   return label;
 }
 
+function createUnknownToggle(riddle) {
+  const label = document.createElement("label");
+  label.className = "include-toggle unknown-toggle";
+
+  const control = document.createElement("input");
+  control.type = "checkbox";
+  control.dataset.field = "unknownMode";
+  control.checked = riddle.unknownMode === true;
+
+  const text = document.createElement("span");
+  text.textContent = "Langage inconnu";
+
+  label.append(control, text);
+  return label;
+}
+
 function renderAdminRiddles(systemId) {
   const system = getSystemById(systemId);
   adminRiddleList.innerHTML = "";
@@ -1021,7 +1149,7 @@ function renderAdminRiddles(systemId) {
     const secret = document.createElement("small");
     secret.textContent = `Mot secret: ${riddle.secret}`;
 
-    summary.append(title, place, secret, createIncludeToggle(riddle));
+    summary.append(title, place, secret, createIncludeToggle(riddle), createUnknownToggle(riddle));
 
     const fields = document.createElement("div");
     fields.className = "admin-field-grid";

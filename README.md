@@ -29,6 +29,7 @@ Dans l'admin tu peux :
 - modifier les mots secrets ;
 - modifier les cachettes ;
 - decocher les enigmes en trop pour reduire le parcours ;
+- activer le mode `Langage inconnu` sur une enigme ;
 - choisir une heure d'ouverture et une heure de fermeture ;
 - bloquer le jeu avec le message "Pas de missions pour l'instant." ;
 - regenerer les textes d'un systeme sans ressortir les memes variantes ;
@@ -52,6 +53,8 @@ Tu peux changer :
 - `prep` : ta note de preparation.
 
 Les fiches imprimees ne montrent pas la consigne admin de cachette. Elles affichent seulement la fiche joueur: numero, piece, enigme, indice et mot a entrer.
+
+En mode `Langage inconnu`, le titre, l'enigme et l'indice sont transformes en syllabes codees. Le jeu et la fiche imprimee affichent aussi l'alphabet de decryptage.
 
 Le texte de fin est dans `finalText`.
 
