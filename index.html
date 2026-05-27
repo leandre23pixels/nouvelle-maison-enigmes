@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>La Nouvelle Maison</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="game" id="game">
+        <section class="mission-panel active" data-screen="intro" aria-labelledby="intro-title">
+          <div class="intro-layout">
+            <div class="intro-copy">
+              <p class="kicker">Mission speciale pour Papi et Mamie</p>
+              <h1 id="intro-title">La Nouvelle Maison</h1>
+              <p class="intro-text">
+                Un jeu d'enigmes cache dans la maison, avec un parcours choisi en secret.
+              </p>
+              <div class="intro-actions">
+                <button class="primary-action" type="button" data-action="start">
+                  Commencer
+                </button>
+                <button class="ghost-action" type="button" data-action="prep">
+                  Preparation
+                </button>
+              </div>
+              <p class="intro-lock" id="mission-lock-message" role="status"></p>
+            </div>
+
+            <figure class="house-frame" aria-label="Carte stylisee de la maison">
+              <img src="assets/maison-souvenirs.svg" alt="" />
+              <figcaption>
+                Trouvez les lieux, recoltez les cles, ouvrez le dernier message.
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="mission-panel" data-screen="play" aria-labelledby="room-title">
+          <header class="topbar">
+            <button class="icon-button" type="button" data-action="home" aria-label="Retour a l'accueil">
+              <span aria-hidden="true">&lt;</span>
+            </button>
+            <div class="progress-wrap" aria-label="Progression">
+              <div class="progress-meta">
+                <span id="step-label">Etape 1</span>
+                <span id="score-label">0 cle</span>
+                <span id="joker-label">0 joker</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+            </div>
+            <button class="icon-button" type="button" data-action="reset" aria-label="Recommencer">
+              <span aria-hidden="true">R</span>
+            </button>
+          </header>
+
+          <div class="play-layout">
+            <aside class="memory-strip" aria-label="Cles trouvees">
+              <p class="strip-title">Carnet des cles</p>
+              <ul id="memory-list"></ul>
+            </aside>
+
+            <article class="riddle-card">
+              <p class="chapter" id="chapter-label">Chapitre 1</p>
+              <h2 id="room-title">Le premier indice</h2>
+              <p class="riddle" id="riddle-text"></p>
+
+              <div class="hint-box" id="hint-box" hidden>
+                <p id="hint-text"></p>
+              </div>
+
+              <div class="wheel-panel" id="wheel-panel" hidden>
+                <div class="wheel-stage" aria-hidden="true">
+                  <div class="wheel-pointer"></div>
+                  <div class="wheel" id="wheel">
+                    <span>JOKER</span>
+                    <span>INDICE</span>
+                    <span>COURAGE</span>
+                    <span>JOKER</span>
+                    <span>PRESQUE</span>
+                    <span>SOURIRE</span>
+                  </div>
+                </div>
+                <div class="wheel-copy">
+                  <p id="wheel-result">Tournez la roue une fois par enigme.</p>
+                  <button class="primary-action compact" type="button" data-action="spin">
+                    Tourner
+                  </button>
+                </div>
+              </div>
+
+              <form class="answer-form" id="answer-form" autocomplete="off">
+                <label for="answer-input">Mot secret trouve dans la cachette</label>
+                <div class="answer-row">
+                  <input
+                    id="answer-input"
+                    type="text"
+                    inputmode="text"
+                    placeholder="Ecrire le mot secret"
+                    aria-describedby="feedback"
+                  />
+                  <button class="primary-action compact" type="submit">Valider</button>
+                </div>
+                <p class="feedback" id="feedback" role="status"></p>
+              </form>
+
+              <div class="card-actions">
+                <button class="ghost-action compact" type="button" data-action="hint">
+                  Indice
+                </button>
+                <button class="ghost-action compact" type="button" data-action="wheel">
+                  Roue
+                </button>
+                <button class="ghost-action compact" type="button" data-action="use-joker" disabled>
+                  Utiliser joker
+                </button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="mission-panel" data-screen="final" aria-labelledby="final-title">
+          <div class="final-scene" id="final-scene">
+            <p class="kicker">Mission accomplie</p>
+            <h2 id="final-title">La Nouvelle Maison est ouverte</h2>
+            <p class="final-message" id="final-message"></p>
+            <div class="word-ribbon" id="word-ribbon"></div>
+            <p class="signature">Avec tout mon coeur, votre petit-fils.</p>
+            <div class="intro-actions">
+              <button class="primary-action" type="button" data-action="again">Rejouer</button>
+              <button class="ghost-action" type="button" data-action="prep">Preparation</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="mission-panel prep-panel" data-screen="prep" aria-labelledby="prep-title">
+          <header class="topbar prep-topbar">
+            <button class="icon-button" type="button" data-action="home" aria-label="Retour a l'accueil">
+              <span aria-hidden="true">&lt;</span>
+            </button>
+            <div>
+              <p class="kicker">Compte admin</p>
+              <h2 id="prep-title">Preparation</h2>
+            </div>
+            <button class="icon-button" type="button" data-action="print" aria-label="Imprimer">
+              <span aria-hidden="true">P</span>
+            </button>
+          </header>
+
+          <div class="admin-lock" id="admin-lock">
+            <form class="admin-login" id="admin-login" autocomplete="off">
+              <p class="kicker">Acces protege</p>
+              <h3>Code admin</h3>
+              <label for="admin-code">Entre le code pour modifier la preparation</label>
+              <div class="answer-row">
+                <input id="admin-code" type="password" placeholder="Code admin" />
+                <button class="primary-action compact" type="submit">Entrer</button>
+              </div>
+              <p class="feedback" id="admin-feedback" role="status"></p>
+            </form>
+          </div>
+
+          <div class="admin-panel" id="admin-panel" hidden>
+            <section class="admin-toolbar" aria-label="Outils admin">
+              <div>
+                <p class="kicker">Banque d'enigmes</p>
+                <strong id="admin-count">300 enigmes disponibles</strong>
+                <span id="active-system-name">Systeme actif</span>
+                <span id="sync-status">Serveur: local</span>
+              </div>
+              <label>
+                Systeme a preparer
+                <select id="system-select"></select>
+              </label>
+              <label>
+                Nom du systeme
+                <input id="system-name-input" type="text" />
+              </label>
+              <div class="admin-actions">
+                <button class="primary-action compact" type="button" data-action="activate-system">
+                  Activer
+                </button>
+                <button class="ghost-action compact" type="button" data-action="regenerate-system">
+                  Generer textes
+                </button>
+                <button class="ghost-action compact" type="button" data-action="save-edits">
+                  Sauver modifications
+                </button>
+              </div>
+            </section>
+
+            <section class="mission-settings" aria-label="Horaires de mission">
+              <div>
+                <p class="kicker">Ouverture</p>
+                <h3>Horaires de jeu</h3>
+              </div>
+              <label class="switch-line">
+                <input id="mission-schedule-enabled" type="checkbox" />
+                <span>Bloquer la mission hors horaires</span>
+              </label>
+              <label>
+                Ouverture
+                <input id="mission-open-at" type="datetime-local" />
+              </label>
+              <label>
+                Fermeture
+                <input id="mission-close-at" type="datetime-local" />
+              </label>
+              <label class="settings-message">
+                Message si ferme
+                <input id="mission-closed-message" type="text" value="Pas de missions pour l'instant." />
+              </label>
+            </section>
+
+            <section
+              class="admin-riddle-list"
+              id="admin-riddle-list"
+              aria-label="Modification des indices"
+            ></section>
+            <div class="prep-grid" id="prep-grid"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="sync-config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
