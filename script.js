@@ -103,6 +103,190 @@ const GENERATED_HINTS = [
   "Cherchez dans {place}, a hauteur des mains ou des yeux.",
 ];
 
+const HARD_TITLE_TEMPLATES = [
+  "Defi de deduction",
+  "Piece mystere",
+  "Piste sans nom",
+  "Question difficile",
+  "Cachette a deviner",
+  "Enigme de maison",
+];
+
+const HARD_RIDDLE_CLUES = {
+  entree: [
+    "Je suis le premier bonjour de la maison. On y pose parfois les chaussures, les sacs et les manteaux.",
+    "Avant de vraiment entrer dans l'histoire, tout le monde passe par moi sans y rester longtemps.",
+  ],
+  salon: [
+    "On s'y installe pour parler, regarder un ecran ou se poser ensemble apres la journee.",
+    "Je suis le coin ou les coussins, les discussions et les moments calmes se retrouvent souvent.",
+  ],
+  cuisine: [
+    "On y transforme les ingredients en repas. Les odeurs y donnent souvent envie de rester.",
+    "Je garde les ustensiles, les placards utiles et les petites preuves de gourmandise.",
+  ],
+  salleamanger: [
+    "Les assiettes y attendent les histoires. On s'y retrouve quand le repas devient un moment.",
+    "Je suis l'endroit ou les chaises entourent souvent le meme point pour partager quelque chose.",
+  ],
+  chambre1: [
+    "Premier coin de repos a identifier. Cherchez la ou une journee peut finir au calme.",
+    "Je suis un espace de sommeil numerote au debut de la liste, avec des affaires plus personnelles.",
+  ],
+  chambre2: [
+    "Deuxieme coin de repos. Il faut comparer les espaces calmes pour choisir le bon.",
+    "Je ressemble a un lieu de nuit, mais mon numero aide a ne pas le confondre avec les autres.",
+  ],
+  chambre3: [
+    "Troisieme coin de repos. La piste demande de compter les espaces ou l'on peut dormir.",
+    "Je suis un lieu calme avec un numero qui arrive apres deux autres du meme genre.",
+  ],
+  chambre4: [
+    "Quatrieme coin de repos. Si plusieurs portes se ressemblent, le nombre devient la cle.",
+    "Je suis le dernier espace de sommeil numerote dans cette mission.",
+  ],
+  salledebain: [
+    "L'eau, les serviettes et le miroir y ont souvent leur place. On y passe pour se preparer.",
+    "On y cherche la proprete, un reflet et parfois une brosse posee trop vite.",
+  ],
+  toilettes: [
+    "Petite piece de passage rapide, rarement choisie pour discuter longtemps.",
+    "On y va seul, vite, et la porte se referme presque toujours derriere soi.",
+  ],
+  couloir: [
+    "Je relie les autres lieux sans etre vraiment une destination. Les pas y passent plus qu'ils n'y restent.",
+    "Je suis un chemin interieur, utile pour aller d'une piece a l'autre.",
+  ],
+  escalier: [
+    "Je fais monter ou descendre l'enquete. Chaque marche rapproche d'un autre niveau.",
+    "On ne m'utilise pas pour rester immobile: je sers a changer d'etage.",
+  ],
+  bureau: [
+    "Papiers, stylos et choses serieuses y trouvent facilement leur place.",
+    "On y pose souvent ce qui demande de la concentration, des notes ou un peu de travail.",
+  ],
+  bibliotheque: [
+    "Les pages y restent alignees en silence. Un titre peut cacher plus qu'une histoire.",
+    "Cherchez pres des couvertures, des tranches et des mots ranges les uns contre les autres.",
+  ],
+  buanderie: [
+    "Le linge y passe d'un etat a l'autre. Les paniers et les produits y donnent la piste.",
+    "Je suis le coin des vetements a laver, a secher ou a plier.",
+  ],
+  garage: [
+    "Les outils, les objets encombrants ou ce qui roule aiment souvent cet endroit.",
+    "On y range ce qui n'a pas vraiment sa place dans les pieces de vie.",
+  ],
+  jardin: [
+    "La piste quitte les murs. Terre, plantes et air libre peuvent aider a comprendre.",
+    "Cherchez du cote ou la maison respire dehors, pres du vert et des chemins.",
+  ],
+  terrasse: [
+    "C'est un dehors proche de la maison, fait pour se poser sans partir loin.",
+    "On peut y etre a l'air libre tout en restant colle a la maison.",
+  ],
+  balcon: [
+    "Petit dehors suspendu, il donne de l'air sans vraiment descendre au sol.",
+    "On y sort pour regarder dehors depuis une hauteur ou un bord de maison.",
+  ],
+  placardentree: [
+    "Pres du premier passage, une porte cache souvent manteaux, sacs ou chaussures.",
+    "La piste commence la ou les affaires d'arrivee disparaissent derriere une porte.",
+  ],
+  dressing: [
+    "Les vetements y patientent par couleurs, saisons ou habitudes.",
+    "On y choisit de quoi s'habiller avant de repartir dans la journee.",
+  ],
+  cellier: [
+    "Les provisions, bouteilles ou reserves y dorment avant d'etre utiles.",
+    "Ce n'est pas le repas lui-meme, mais souvent l'endroit qui garde ce qu'il faut pour plus tard.",
+  ],
+  meubletv: [
+    "Cherchez pres de l'ecran qui attire les regards, mais plutot dans ce qui le porte ou l'entoure.",
+    "Le bon support vit sous ou autour des images qui bougent.",
+  ],
+  canape: [
+    "Je suis moelleux, fait pour s'asseoir et parfois pour perdre une telecommande.",
+    "La piste aime les coussins, les accoudoirs et les endroits ou l'on se pose.",
+  ],
+  tablebasse: [
+    "Je reste proche du sol et du coin ou l'on s'assoit. On y pose souvent verres, livres ou telecommandes.",
+    "Cherchez le petit plateau central qui accompagne les moments tranquilles.",
+  ],
+  frigo: [
+    "Le froid garde mes secrets. On m'ouvre quand on cherche quelque chose a manger ou a boire.",
+    "Si la piste semble fraiche, regardez la ou les aliments attendent au frais.",
+  ],
+  four: [
+    "La chaleur y dort jusqu'au moment de cuire quelque chose.",
+    "On m'ouvre avec prudence quand un plat doit passer par le chaud.",
+  ],
+  fenetre: [
+    "Je separe dedans et dehors tout en laissant passer la lumiere.",
+    "On regarde a travers moi sans quitter la piece.",
+  ],
+  miroir: [
+    "Je ne parle pas, mais je renvoie toujours ce qu'on lui montre.",
+    "Si vous voyez votre visage dans la piste, vous etes probablement au bon endroit.",
+  ],
+  tabledenuit: [
+    "Je veille pres du sommeil, assez petite pour garder un livre, une lampe ou des lunettes.",
+    "Cherchez a cote de l'endroit ou l'on dort, la ou les petites choses restent a portee de main.",
+  ],
+};
+
+const HARD_HINT_CLUES = {
+  entree: ["Pensez au tout premier endroit traverse en arrivant."],
+  salon: ["Cherchez le coin ou l'on s'assoit souvent ensemble."],
+  cuisine: ["La piste a un rapport avec les repas avant qu'ils soient servis."],
+  salleamanger: ["Pensez aux chaises rassemblees autour du repas."],
+  chambre1: ["C'est un espace de sommeil, le premier de la serie."],
+  chambre2: ["C'est un espace de sommeil, le deuxieme de la serie."],
+  chambre3: ["C'est un espace de sommeil, le troisieme de la serie."],
+  chambre4: ["C'est un espace de sommeil, le quatrieme de la serie."],
+  salledebain: ["Eau, serviettes et reflet sont les trois meilleurs indices."],
+  toilettes: ["C'est une toute petite piece ou l'on ne reste pas longtemps."],
+  couloir: ["Ce lieu sert surtout a aller ailleurs."],
+  escalier: ["Comptez les marches plutot que les portes."],
+  bureau: ["Pensez aux papiers, crayons et choses a faire."],
+  bibliotheque: ["Les livres donnent la meilleure direction."],
+  buanderie: ["Le linge est le meilleur repere."],
+  garage: ["Outils, voiture ou rangement encombrant peuvent guider."],
+  jardin: ["La piste demande de sortir vers le vert."],
+  terrasse: ["C'est dehors, mais juste contre la maison."],
+  balcon: ["C'est dehors, mais en hauteur ou sur un bord."],
+  placardentree: ["Restez pres de l'arrivee et cherchez ce qui cache les manteaux."],
+  dressing: ["Les vetements ranges sont le meilleur signe."],
+  cellier: ["Pensez aux reserves et aux provisions."],
+  meubletv: ["L'ecran n'est pas la cachette, son support est la piste."],
+  canape: ["Les coussins sont le meilleur depart."],
+  tablebasse: ["Cherchez le petit meuble bas pres de l'assise."],
+  frigo: ["La bonne zone est froide."],
+  four: ["La bonne zone sert a cuire."],
+  fenetre: ["La lumiere et la vue dehors guident."],
+  miroir: ["Le reflet est la piste."],
+  tabledenuit: ["Cherchez pres du sommeil, a portee de main."],
+};
+
+const HARD_GENERIC_RIDDLES = [
+  "La reponse est un lieu ou un objet de la maison. Aucun nom n'est donne: il faut deduire avec les habitudes.",
+  "Observez ce que la maison raconte. La bonne cachette se devine avec l'usage du lieu, pas avec son nom.",
+  "Cette piste ne donne pas la destination directement. Cherchez l'endroit qui correspond le mieux aux indices.",
+];
+
+const HARD_GENERIC_HINTS = [
+  "Pensez a l'usage de l'endroit, pas a son nom.",
+  "Comparez les pieces et choisissez celle qui colle le mieux a la description.",
+  "La reponse est proche d'un repere simple de la maison.",
+];
+
+const HARD_RIDDLE_ENDS = [
+  "Aucun nom de piece n'est ecrit: il faut le deduire.",
+  "La bonne cachette se trouve en comprenant la description.",
+  "Si plusieurs lieux semblent possibles, choisissez celui qui colle le plus aux habitudes.",
+  "La piste parle de l'usage du lieu, pas de son etiquette.",
+];
+
 const GENERATED_PREPS = [
   "Cache une note dans {place} avec le mot {secret}.",
   "Place le papier dans {place}, visible apres une petite observation. Mot secret: {secret}.",
@@ -399,18 +583,50 @@ function pickRandom(list) {
   return list[randomIndex(list.length)];
 }
 
+function pickBySeed(list, seed) {
+  return list[Math.abs(seed) % list.length];
+}
+
+function getHardPlaceBank(map, place, fallback) {
+  return map[normalizeAnswer(place)] || fallback;
+}
+
+function createHardTitle(seed = randomIndex(HARD_TITLE_TEMPLATES.length)) {
+  return pickBySeed(HARD_TITLE_TEMPLATES, seed);
+}
+
+function createHardPlaceText(map, fallback, place, seed = null) {
+  const bank = getHardPlaceBank(map, place, fallback);
+  return seed === null ? pickRandom(bank) : pickBySeed(bank, seed);
+}
+
+function createHardRiddle(place, seed = null) {
+  return `${createHardPlaceText(HARD_RIDDLE_CLUES, HARD_GENERIC_RIDDLES, place, seed)} ${
+    seed === null ? pickRandom(HARD_RIDDLE_ENDS) : pickBySeed(HARD_RIDDLE_ENDS, seed + 3)
+  }`;
+}
+
+function createHardHint(place, seed = null) {
+  return createHardPlaceText(HARD_HINT_CLUES, HARD_GENERIC_HINTS, place, seed);
+}
+
 function createDefaultRiddle(systemIndex, riddleIndex, place) {
   const templateIndex = (systemIndex + riddleIndex) % RIDDLE_TEMPLATES.length;
   const titleIndex = (systemIndex * 2 + riddleIndex) % TITLE_TEMPLATES.length;
+  const hardSeed = systemIndex * DEFAULT_PLACES.length + riddleIndex;
   const secret = slug(place);
 
   return {
     enabled: true,
     unknownMode: false,
+    hardMode: false,
     place,
     title: fillTemplate(TITLE_TEMPLATES[titleIndex], place),
     riddle: fillTemplate(RIDDLE_TEMPLATES[templateIndex], place),
     hint: `Cherchez dans ${place}, pres d'un objet facile a reperer.`,
+    hardTitle: createHardTitle(hardSeed),
+    hardRiddle: createHardRiddle(place, hardSeed),
+    hardHint: createHardHint(place, hardSeed),
     secret,
     prep: `Cache une note dans ${place} avec le mot ${secret.toUpperCase()}.`,
   };
@@ -438,10 +654,14 @@ function normalizeRiddle(raw, fallback) {
   return {
     enabled: raw?.enabled === undefined ? fallback.enabled !== false : Boolean(raw.enabled),
     unknownMode: Boolean(raw?.unknownMode ?? fallback.unknownMode),
+    hardMode: Boolean(raw?.hardMode ?? fallback.hardMode),
     place,
     title: cleanText(raw?.title, fallback.title),
     riddle: cleanText(raw?.riddle, fallback.riddle),
     hint: cleanText(raw?.hint, fallback.hint),
+    hardTitle: cleanText(raw?.hardTitle, fallback.hardTitle || createHardTitle()),
+    hardRiddle: cleanText(raw?.hardRiddle, fallback.hardRiddle || createHardRiddle(place)),
+    hardHint: cleanText(raw?.hardHint, fallback.hardHint || createHardHint(place)),
     secret,
     prep: cleanText(raw?.prep, `Cache une note dans ${place} avec le mot ${secret.toUpperCase()}.`),
   };
@@ -843,6 +1063,27 @@ function renderMemoryList() {
   });
 }
 
+function getRiddleModeLabel(riddle) {
+  const modes = [];
+
+  if (riddle.hardMode === true) modes.push("Difficulte");
+  if (riddle.unknownMode === true) modes.push("Langage inconnu");
+
+  return modes.length ? modes.join(" + ") : riddle.place;
+}
+
+function getPlayerTitle(riddle) {
+  return riddle.hardMode === true ? riddle.hardTitle : riddle.title;
+}
+
+function getPlayerRiddle(riddle) {
+  return riddle.hardMode === true ? riddle.hardRiddle : riddle.riddle;
+}
+
+function getPlayerHint(riddle) {
+  return riddle.hardMode === true ? riddle.hardHint : riddle.hint;
+}
+
 function renderCurrentRiddle() {
   const system = getActiveSystem();
   const riddles = getActiveRiddles();
@@ -860,6 +1101,9 @@ function renderCurrentRiddle() {
 
   const riddle = riddles[state.current];
   const usesUnknownLanguage = riddle.unknownMode === true;
+  const playerTitle = getPlayerTitle(riddle);
+  const playerRiddle = getPlayerRiddle(riddle);
+  const playerHint = getPlayerHint(riddle);
   const done = state.found.length;
   const spinKey = getSpinKey(system.id, riddle.sourceIndex);
   const spin = state.wheelSpins[spinKey];
@@ -868,10 +1112,10 @@ function renderCurrentRiddle() {
   scoreLabel.textContent = `${done} cle${done > 1 ? "s" : ""} trouvee${done > 1 ? "s" : ""}`;
   jokerLabel.textContent = `${state.jokers} joker${state.jokers > 1 ? "s" : ""}`;
   progressFill.style.width = `${(done / riddles.length) * 100}%`;
-  chapterLabel.textContent = `${system.name} / ${usesUnknownLanguage ? "Langage inconnu" : riddle.place}`;
-  roomTitle.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.title) : riddle.title;
-  riddleText.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.riddle) : riddle.riddle;
-  hintText.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.hint) : riddle.hint;
+  chapterLabel.textContent = `${system.name} / ${getRiddleModeLabel(riddle)}`;
+  roomTitle.textContent = usesUnknownLanguage ? encodeUnknownText(playerTitle) : playerTitle;
+  riddleText.textContent = usesUnknownLanguage ? encodeUnknownText(playerRiddle) : playerRiddle;
+  hintText.textContent = usesUnknownLanguage ? encodeUnknownText(playerHint) : playerHint;
   roomTitle.classList.toggle("unknown-text", usesUnknownLanguage);
   riddleText.classList.toggle("unknown-text", usesUnknownLanguage);
   hintText.classList.toggle("unknown-text", usesUnknownLanguage);
@@ -1009,29 +1253,35 @@ function renderPrepCards(systemId) {
 
   riddles.forEach((riddle, index) => {
     const usesUnknownLanguage = riddle.unknownMode === true;
+    const usesHardMode = riddle.hardMode === true;
+    const prepModes = [];
     const card = document.createElement("article");
     card.className = "prep-card print-clue-card";
     card.classList.toggle("unknown-card", usesUnknownLanguage);
+    card.classList.toggle("hard-card", usesHardMode);
+
+    if (usesHardMode) prepModes.push("difficile");
+    if (usesUnknownLanguage) prepModes.push("code");
 
     const badge = document.createElement("span");
     badge.className = "prep-badge";
-    badge.textContent = usesUnknownLanguage
-      ? `Indice ${String(index + 1).padStart(2, "0")} / code`
-      : `Indice ${String(index + 1).padStart(2, "0")}`;
+    badge.textContent = `Indice ${String(index + 1).padStart(2, "0")}${
+      prepModes.length ? ` / ${prepModes.join(" + ")}` : ""
+    }`;
 
     const title = document.createElement("h3");
     title.classList.toggle("unknown-text", usesUnknownLanguage);
-    title.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.title) : riddle.place;
+    title.textContent = usesUnknownLanguage ? encodeUnknownText(getPlayerTitle(riddle)) : riddle.place;
 
     const riddleCopy = document.createElement("p");
     riddleCopy.className = "print-riddle";
     riddleCopy.classList.toggle("unknown-text", usesUnknownLanguage);
-    riddleCopy.textContent = usesUnknownLanguage ? encodeUnknownText(riddle.riddle) : riddle.riddle;
+    riddleCopy.textContent = usesUnknownLanguage ? encodeUnknownText(getPlayerRiddle(riddle)) : getPlayerRiddle(riddle);
 
     const hint = document.createElement("p");
     hint.className = "print-hint";
     hint.classList.toggle("unknown-text", usesUnknownLanguage);
-    hint.textContent = `Indice: ${usesUnknownLanguage ? encodeUnknownText(riddle.hint) : riddle.hint}`;
+    hint.textContent = `Indice: ${usesUnknownLanguage ? encodeUnknownText(getPlayerHint(riddle)) : getPlayerHint(riddle)}`;
 
     const secret = document.createElement("span");
     secret.className = "prep-secret";
@@ -1088,16 +1338,28 @@ function createGeneratedText(field, place, secret) {
     );
   }
 
+  if (field === "hardTitle") {
+    return createHardTitle();
+  }
+
   if (field === "riddle") {
     return `${fillGeneratedTemplate(pickRandom(GENERATED_RIDDLES), place, secret)} ${pickRandom(
       GENERATED_RIDDLE_ENDS,
     )}`;
   }
 
+  if (field === "hardRiddle") {
+    return createHardRiddle(place);
+  }
+
   if (field === "hint") {
     return `${fillGeneratedTemplate(pickRandom(GENERATED_HINTS), place, secret)} ${pickRandom(
       GENERATED_HINT_ENDS,
     )}`;
+  }
+
+  if (field === "hardHint") {
+    return createHardHint(place);
   }
 
   return `${fillGeneratedTemplate(pickRandom(GENERATED_PREPS), place, secret)} ${pickRandom(
@@ -1139,11 +1401,15 @@ function regenerateSelectedSystemTexts() {
     return {
       enabled: riddle.enabled !== false,
       unknownMode: riddle.unknownMode === true,
+      hardMode: riddle.hardMode === true,
       place,
       secret,
       title: createUniqueGeneratedText(system.id, index, "title", riddle.title, place, secret),
       riddle: createUniqueGeneratedText(system.id, index, "riddle", riddle.riddle, place, secret),
       hint: createUniqueGeneratedText(system.id, index, "hint", riddle.hint, place, secret),
+      hardTitle: createUniqueGeneratedText(system.id, index, "hardTitle", riddle.hardTitle, place, secret),
+      hardRiddle: createUniqueGeneratedText(system.id, index, "hardRiddle", riddle.hardRiddle, place, secret),
+      hardHint: createUniqueGeneratedText(system.id, index, "hardHint", riddle.hardHint, place, secret),
       prep: createUniqueGeneratedText(system.id, index, "prep", riddle.prep, place, secret),
     };
   });
@@ -1197,6 +1463,22 @@ function createUnknownToggle(riddle) {
   return label;
 }
 
+function createHardToggle(riddle) {
+  const label = document.createElement("label");
+  label.className = "include-toggle hard-toggle";
+
+  const control = document.createElement("input");
+  control.type = "checkbox";
+  control.dataset.field = "hardMode";
+  control.checked = riddle.hardMode === true;
+
+  const text = document.createElement("span");
+  text.textContent = "Mode difficulte";
+
+  label.append(control, text);
+  return label;
+}
+
 function renderAdminRiddles(systemId) {
   const system = getSystemById(systemId);
   adminRiddleList.innerHTML = "";
@@ -1219,7 +1501,14 @@ function renderAdminRiddles(systemId) {
     const secret = document.createElement("small");
     secret.textContent = `Mot secret: ${riddle.secret}`;
 
-    summary.append(title, place, secret, createIncludeToggle(riddle), createUnknownToggle(riddle));
+    summary.append(
+      title,
+      place,
+      secret,
+      createIncludeToggle(riddle),
+      createUnknownToggle(riddle),
+      createHardToggle(riddle),
+    );
 
     const fields = document.createElement("div");
     fields.className = "admin-field-grid";
@@ -1229,6 +1518,9 @@ function renderAdminRiddles(systemId) {
       createField("Titre", "title", riddle.title),
       createField("Enigme", "riddle", riddle.riddle, true),
       createField("Indice", "hint", riddle.hint, true),
+      createField("Titre difficulte", "hardTitle", riddle.hardTitle),
+      createField("Enigme difficulte (sans nom de piece)", "hardRiddle", riddle.hardRiddle, true),
+      createField("Indice difficulte (sans nom de piece)", "hardHint", riddle.hardHint, true),
       createField("Cachette admin (non imprimee)", "prep", riddle.prep, true),
     );
 

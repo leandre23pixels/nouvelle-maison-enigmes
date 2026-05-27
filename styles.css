@@ -898,6 +898,13 @@ h2 {
     #fffaf0;
 }
 
+.prep-card.hard-card {
+  border-color: rgba(141, 39, 64, 0.32);
+  background:
+    linear-gradient(180deg, rgba(255, 240, 232, 0.95), rgba(255, 250, 240, 0.9)),
+    #fffaf0;
+}
+
 .prep-badge {
   width: fit-content;
   padding: 5px 9px;
@@ -1028,6 +1035,11 @@ h2 {
   color: #6b4814 !important;
 }
 
+.hard-toggle {
+  background: rgba(141, 39, 64, 0.12);
+  color: var(--wine) !important;
+}
+
 .print-cipher-key {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   padding-top: 8px;
@@ -1050,10 +1062,7 @@ h2 {
   gap: 12px;
 }
 
-.admin-field-grid label:nth-child(3),
-.admin-field-grid label:nth-child(4),
-.admin-field-grid label:nth-child(5),
-.admin-field-grid label:nth-child(6) {
+.admin-field-grid label:nth-child(n + 3) {
   grid-column: 1 / -1;
 }
 
@@ -1187,10 +1196,7 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .admin-field-grid label:nth-child(3),
-  .admin-field-grid label:nth-child(4),
-  .admin-field-grid label:nth-child(5),
-  .admin-field-grid label:nth-child(6) {
+  .admin-field-grid label:nth-child(n + 3) {
     grid-column: auto;
   }
 }
@@ -1364,7 +1370,8 @@ h2 {
     color: #111 !important;
   }
 
-  .prep-card.unknown-card {
+  .prep-card.unknown-card,
+  .prep-card.hard-card {
     border-color: #222;
     background: #fff;
   }
