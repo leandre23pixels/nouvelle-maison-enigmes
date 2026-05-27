@@ -52,7 +52,7 @@ Tu peux changer :
 - `secret` : le mot qu'ils doivent taper ;
 - `prep` : ta note de preparation.
 
-Les fiches imprimees ne montrent pas la consigne admin de cachette. Elles affichent seulement la fiche joueur: numero, piece, enigme, indice et mot a entrer.
+Les fiches imprimees ne montrent pas la consigne admin de cachette. Elles sont compactes pour economiser les feuilles et affichent la fiche joueur: numero, piece, enigme, indice, BRAVO et code.
 
 En mode `Langage inconnu`, le titre, l'enigme et l'indice sont transformes en syllabes codees. Le jeu et la fiche imprimee affichent aussi l'alphabet de decryptage.
 

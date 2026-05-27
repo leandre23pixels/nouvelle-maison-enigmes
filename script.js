@@ -996,6 +996,7 @@ function renderAdminSystem(systemId) {
 
 function renderPrepCards(systemId) {
   const riddles = getEnabledRiddles(getSystemById(systemId));
+  const hasUnknownLanguage = riddles.some((riddle) => riddle.unknownMode === true);
   prepGrid.innerHTML = "";
 
   if (!riddles.length) {
@@ -1034,19 +1035,38 @@ function renderPrepCards(systemId) {
 
     const secret = document.createElement("span");
     secret.className = "prep-secret";
-    secret.textContent = `Mot a entrer: ${titleCaseSecret(riddle.secret)}`;
+    secret.textContent = `BRAVO ! Code: ${titleCaseSecret(riddle.secret)}`;
 
     card.append(badge, title, riddleCopy, hint, secret);
 
     if (usesUnknownLanguage) {
-      const printKey = document.createElement("div");
-      printKey.className = "print-cipher-key";
-      renderCipherKey(printKey);
-      card.appendChild(printKey);
+      const cipherNote = document.createElement("p");
+      cipherNote.className = "cipher-print-note";
+      cipherNote.textContent = "Utilise la carte Code langage pour decrypter.";
+      card.appendChild(cipherNote);
     }
 
     prepGrid.appendChild(card);
   });
+
+  if (hasUnknownLanguage) {
+    const keyCard = document.createElement("article");
+    keyCard.className = "prep-card cipher-reference-card";
+
+    const badge = document.createElement("span");
+    badge.className = "prep-badge";
+    badge.textContent = "Code langage";
+
+    const title = document.createElement("h3");
+    title.textContent = "Alphabet de decryptage";
+
+    const printKey = document.createElement("div");
+    printKey.className = "print-cipher-key";
+    renderCipherKey(printKey);
+
+    keyCard.append(badge, title, printKey);
+    prepGrid.appendChild(keyCard);
+  }
 }
 
 function rememberGeneratedText(key, value) {
