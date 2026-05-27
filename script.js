@@ -199,6 +199,8 @@ const syncConfig = window.NOUVELLE_MAISON_SYNC || {};
 let isApplyingSync = false;
 let syncPushTimer = null;
 let syncPullTimer = null;
+let adminHasUnsavedChanges = false;
+let syncApplyPausedUntil = 0;
 let adminUnlocked = false;
 let editableSystems = loadEditableSystems();
 let missionSettings = loadMissionSettings();
@@ -469,6 +471,36 @@ function setSyncStatus(text) {
   }
 }
 
+function isPrepScreenActive() {
+  return document.querySelector('[data-screen="prep"]').classList.contains("active");
+}
+
+function isAdminEditingElement(element) {
+  return Boolean(
+    element &&
+      adminPanel?.contains(element) &&
+      ["INPUT", "SELECT", "TEXTAREA"].includes(element.tagName),
+  );
+}
+
+function markAdminDirty() {
+  if (isApplyingSync) return;
+  adminHasUnsavedChanges = true;
+  setSyncStatus("Serveur: edition locale");
+}
+
+function markAdminSaved() {
+  adminHasUnsavedChanges = false;
+  syncApplyPausedUntil = Date.now() + 2500;
+  setSyncStatus("Serveur: sauvegarde...");
+}
+
+function shouldPauseIncomingSync() {
+  if (!adminUnlocked || !isPrepScreenActive()) return false;
+  if (adminHasUnsavedChanges || Date.now() < syncApplyPausedUntil) return true;
+  return isAdminEditingElement(document.activeElement);
+}
+
 function getSyncHeaders() {
   const headers = { "Content-Type": "application/json" };
 
@@ -552,6 +584,11 @@ async function pullSync() {
 
     const payload = await response.json();
     if (payload.data) {
+      if (shouldPauseIncomingSync()) {
+        setSyncStatus("Serveur: edition locale");
+        return;
+      }
+
       applySyncPayload(payload.data);
     } else {
       queueSyncPush();
@@ -1022,6 +1059,7 @@ function saveAdminEdits(options = {}) {
   });
 
   saveEditableSystems();
+  markAdminSaved();
 
   if (rerender) {
     renderSystemOptions();
@@ -1160,8 +1198,25 @@ systemSelect.addEventListener("change", () => {
   renderAdminSystem(adminSelectedSystemId);
 });
 
+systemNameInput.addEventListener("input", markAdminDirty);
+
+[scheduleEnabledInput, missionOpenAtInput, missionCloseAtInput, missionClosedMessageInput].forEach((control) => {
+  control.addEventListener("input", markAdminDirty);
+  control.addEventListener("change", markAdminDirty);
+});
+
+adminRiddleList.addEventListener("input", (event) => {
+  if (event.target?.dataset?.field) {
+    markAdminDirty();
+  }
+});
+
 adminRiddleList.addEventListener("change", (event) => {
-  if (event.target?.dataset?.field !== "enabled") return;
+  if (!event.target?.dataset?.field) return;
+
+  markAdminDirty();
+
+  if (event.target.dataset.field !== "enabled") return;
 
   const card = event.target.closest(".admin-riddle-card");
   card?.classList.toggle("is-disabled", !event.target.checked);
