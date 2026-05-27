@@ -315,6 +315,7 @@ function createDefaultRiddle(systemIndex, riddleIndex, place) {
   const secret = slug(place);
 
   return {
+    enabled: true,
     place,
     title: fillTemplate(TITLE_TEMPLATES[titleIndex], place),
     riddle: fillTemplate(RIDDLE_TEMPLATES[templateIndex], place),
@@ -344,6 +345,7 @@ function normalizeRiddle(raw, fallback) {
   const secret = slug(cleanText(raw?.secret, fallback.secret || place));
 
   return {
+    enabled: raw?.enabled === undefined ? fallback.enabled !== false : Boolean(raw.enabled),
     place,
     title: cleanText(raw?.title, fallback.title),
     riddle: cleanText(raw?.riddle, fallback.riddle),
@@ -441,11 +443,13 @@ function isMissionOpen(now = new Date()) {
 }
 
 function updateMissionLockMessage() {
-  const open = isMissionOpen();
+  const hasMission = getActiveRiddles().length > 0;
+  const open = hasMission && isMissionOpen();
+  const closedMessage = hasMission ? missionSettings.closedMessage : defaultMissionSettings.closedMessage;
 
   if (missionLockMessage) {
     missionLockMessage.hidden = open;
-    missionLockMessage.textContent = open ? "" : missionSettings.closedMessage;
+    missionLockMessage.textContent = open ? "" : closedMessage;
   }
 
   if (!open && document.querySelector('[data-screen="play"]').classList.contains("active")) {
@@ -611,8 +615,14 @@ function getActiveSystem() {
   return getSystemById(state.systemId);
 }
 
+function getEnabledRiddles(system) {
+  return system.riddles
+    .map((riddle, sourceIndex) => ({ ...riddle, sourceIndex }))
+    .filter((riddle) => riddle.enabled !== false);
+}
+
 function getActiveRiddles() {
-  return getActiveSystem().riddles;
+  return getEnabledRiddles(getActiveSystem());
 }
 
 function saveState() {
@@ -666,6 +676,12 @@ function renderCurrentRiddle() {
   const system = getActiveSystem();
   const riddles = getActiveRiddles();
 
+  if (!riddles.length) {
+    updateMissionLockMessage();
+    showScreen("intro");
+    return;
+  }
+
   if (state.current >= riddles.length) {
     showScreen("final");
     return;
@@ -673,7 +689,7 @@ function renderCurrentRiddle() {
 
   const riddle = riddles[state.current];
   const done = state.found.length;
-  const spinKey = getSpinKey(system.id, state.current);
+  const spinKey = getSpinKey(system.id, riddle.sourceIndex);
   const spin = state.wheelSpins[spinKey];
 
   stepLabel.textContent = `Etape ${state.current + 1} sur ${riddles.length}`;
@@ -719,7 +735,8 @@ function markFound(riddle, usedJoker = false) {
 
 function spinWheel() {
   const system = getActiveSystem();
-  const spinKey = getSpinKey(system.id, state.current);
+  const riddle = getActiveRiddles()[state.current];
+  const spinKey = getSpinKey(system.id, riddle.sourceIndex);
 
   if (state.wheelSpins[spinKey]) {
     wheelResult.textContent = "La roue a deja tourne pour cette enigme.";
@@ -784,13 +801,14 @@ function renderAdmin() {
 
 function renderAdminSystem(systemId) {
   const system = getSystemById(systemId);
+  const selectedCount = getEnabledRiddles(system).length;
   const totalRiddleCount = editableSystems.reduce(
     (total, currentSystem) => total + currentSystem.riddles.length,
     0,
   );
 
   systemNameInput.value = system.name;
-  adminCount.textContent = `${totalRiddleCount} enigmes disponibles`;
+  adminCount.textContent = `${selectedCount} incluses dans ce systeme / ${totalRiddleCount} disponibles`;
   activeSystemName.textContent = `Systeme actif: ${getActiveSystem().name}`;
   renderMissionSettings();
   renderPrepCards(systemId);
@@ -798,8 +816,16 @@ function renderAdminSystem(systemId) {
 }
 
 function renderPrepCards(systemId) {
-  const riddles = getSystemById(systemId).riddles;
+  const riddles = getEnabledRiddles(getSystemById(systemId));
   prepGrid.innerHTML = "";
+
+  if (!riddles.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-prep";
+    empty.textContent = "Aucun indice coche pour ce systeme.";
+    prepGrid.appendChild(empty);
+    return;
+  }
 
   riddles.forEach((riddle, index) => {
     const card = document.createElement("article");
@@ -820,15 +846,11 @@ function renderPrepCards(systemId) {
     hint.className = "print-hint";
     hint.textContent = `Indice: ${riddle.hint}`;
 
-    const prep = document.createElement("p");
-    prep.className = "prep-note";
-    prep.textContent = riddle.prep;
-
     const secret = document.createElement("span");
     secret.className = "prep-secret";
-    secret.textContent = `Mot secret: ${titleCaseSecret(riddle.secret)}`;
+    secret.textContent = `Mot a entrer: ${titleCaseSecret(riddle.secret)}`;
 
-    card.append(badge, title, riddleCopy, hint, secret, prep);
+    card.append(badge, title, riddleCopy, hint, secret);
     prepGrid.appendChild(card);
   });
 }
@@ -897,6 +919,7 @@ function regenerateSelectedSystemTexts() {
     const secret = slug(cleanText(riddle.secret, place));
 
     return {
+      enabled: riddle.enabled !== false,
       place,
       secret,
       title: createUniqueGeneratedText(system.id, index, "title", riddle.title, place, secret),
@@ -923,6 +946,22 @@ function createField(labelText, field, value, multiline = false) {
   return label;
 }
 
+function createIncludeToggle(riddle) {
+  const label = document.createElement("label");
+  label.className = "include-toggle";
+
+  const control = document.createElement("input");
+  control.type = "checkbox";
+  control.dataset.field = "enabled";
+  control.checked = riddle.enabled !== false;
+
+  const text = document.createElement("span");
+  text.textContent = "Inclure";
+
+  label.append(control, text);
+  return label;
+}
+
 function renderAdminRiddles(systemId) {
   const system = getSystemById(systemId);
   adminRiddleList.innerHTML = "";
@@ -930,6 +969,7 @@ function renderAdminRiddles(systemId) {
   system.riddles.forEach((riddle, index) => {
     const article = document.createElement("article");
     article.className = "admin-riddle-card";
+    article.classList.toggle("is-disabled", riddle.enabled === false);
     article.dataset.index = String(index);
 
     const summary = document.createElement("div");
@@ -944,7 +984,7 @@ function renderAdminRiddles(systemId) {
     const secret = document.createElement("small");
     secret.textContent = `Mot secret: ${riddle.secret}`;
 
-    summary.append(title, place, secret);
+    summary.append(title, place, secret, createIncludeToggle(riddle));
 
     const fields = document.createElement("div");
     fields.className = "admin-field-grid";
@@ -954,7 +994,7 @@ function renderAdminRiddles(systemId) {
       createField("Titre", "title", riddle.title),
       createField("Enigme", "riddle", riddle.riddle, true),
       createField("Indice", "hint", riddle.hint, true),
-      createField("Cachette", "prep", riddle.prep, true),
+      createField("Cachette admin (non imprimee)", "prep", riddle.prep, true),
     );
 
     article.append(summary, fields);
@@ -975,7 +1015,7 @@ function saveAdminEdits(options = {}) {
     const values = {};
 
     card.querySelectorAll("[data-field]").forEach((control) => {
-      values[control.dataset.field] = control.value;
+      values[control.dataset.field] = control.type === "checkbox" ? control.checked : control.value;
     });
 
     system.riddles[index] = normalizeRiddle(values, current);
@@ -1072,6 +1112,11 @@ function resetGame(render = true) {
   saveState();
 
   if (render) {
+    if (!getActiveRiddles().length) {
+      showScreen("intro");
+      return;
+    }
+
     renderCurrentRiddle();
   }
 }
@@ -1115,6 +1160,13 @@ systemSelect.addEventListener("change", () => {
   renderAdminSystem(adminSelectedSystemId);
 });
 
+adminRiddleList.addEventListener("change", (event) => {
+  if (event.target?.dataset?.field !== "enabled") return;
+
+  const card = event.target.closest(".admin-riddle-card");
+  card?.classList.toggle("is-disabled", !event.target.checked);
+});
+
 document.addEventListener("click", (event) => {
   const button = event.target.closest("[data-action]");
   if (!button) return;
@@ -1122,6 +1174,7 @@ document.addEventListener("click", (event) => {
   const action = button.dataset.action;
 
   if (action === "start") {
+    if (!updateMissionLockMessage()) return;
     showScreen(state.current >= getActiveRiddles().length ? "final" : "play");
   }
 

@@ -28,10 +28,11 @@ Dans l'admin tu peux :
 - modifier les indices ;
 - modifier les mots secrets ;
 - modifier les cachettes ;
+- decocher les enigmes en trop pour reduire le parcours ;
 - choisir une heure d'ouverture et une heure de fermeture ;
 - bloquer le jeu avec le message "Pas de missions pour l'instant." ;
 - regenerer les textes d'un systeme sans ressortir les memes variantes ;
-- imprimer la preparation des cachettes.
+- imprimer seulement les indices coches.
 
 ## Cote joueurs
 
@@ -49,6 +50,8 @@ Tu peux changer :
 - `hint` : l'indice ;
 - `secret` : le mot qu'ils doivent taper ;
 - `prep` : ta note de preparation.
+
+Les fiches imprimees ne montrent pas la consigne admin de cachette. Elles affichent seulement la fiche joueur: numero, piece, enigme, indice et mot a entrer.
 
 Le texte de fin est dans `finalText`.
 

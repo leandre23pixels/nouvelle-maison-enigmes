@@ -853,12 +853,6 @@ h2 {
   font-weight: 780;
 }
 
-.prep-note {
-  padding-top: 8px;
-  border-top: 1px dashed rgba(25, 24, 23, 0.24);
-  font-size: 0.92rem;
-}
-
 .prep-card strong {
   color: var(--wine);
 }
@@ -878,6 +872,16 @@ h2 {
   font-weight: 900;
 }
 
+.empty-prep {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 18px;
+  border-radius: var(--radius);
+  background: rgba(141, 39, 64, 0.1);
+  color: var(--wine);
+  font-weight: 850;
+}
+
 .admin-riddle-list {
   display: grid;
   gap: 14px;
@@ -892,6 +896,10 @@ h2 {
   border-radius: var(--radius);
   background: rgba(255, 250, 240, 0.84);
   border: 1px solid rgba(25, 24, 23, 0.11);
+}
+
+.admin-riddle-card.is-disabled {
+  opacity: 0.58;
 }
 
 .admin-riddle-card strong {
@@ -909,6 +917,25 @@ h2 {
 .admin-riddle-card small {
   color: rgba(25, 24, 23, 0.58);
   font-weight: 850;
+}
+
+.include-toggle {
+  width: fit-content;
+  min-height: 38px;
+  display: flex !important;
+  align-items: center;
+  gap: 9px !important;
+  margin-top: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  background: rgba(20, 112, 111, 0.1);
+  color: var(--teal-dark) !important;
+}
+
+.include-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--teal);
 }
 
 .admin-field-grid {
