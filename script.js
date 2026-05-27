@@ -214,6 +214,7 @@ const storage = {
   found: "nouvelle-found",
   jokers: "nouvelle-jokers",
   spins: "nouvelle-wheel-spins",
+  order: "nouvelle-riddle-order-v1",
   systems: "nouvelle-editable-systems-v2",
   settings: "nouvelle-mission-settings-v1",
   generationHistory: "nouvelle-generation-history-v1",
@@ -244,6 +245,7 @@ const state = {
   found: readJson(storage.found, []),
   jokers: Number(localStorage.getItem(storage.jokers) || 0),
   wheelSpins: readJson(storage.spins, {}),
+  order: readJson(storage.order, []),
 };
 
 const screens = document.querySelectorAll("[data-screen]");
@@ -609,6 +611,7 @@ function getSyncPayload() {
       found: state.found,
       jokers: state.jokers,
       wheelSpins: state.wheelSpins,
+      order: state.order,
     },
   };
 }
@@ -634,6 +637,7 @@ function applySyncPayload(data) {
     state.found = Array.isArray(data.state.found) ? data.state.found : [];
     state.jokers = Number(data.state.jokers || 0);
     state.wheelSpins = data.state.wheelSpins && typeof data.state.wheelSpins === "object" ? data.state.wheelSpins : {};
+    state.order = Array.isArray(data.state.order) ? data.state.order.map(Number) : [];
     saveState();
   }
 
@@ -746,8 +750,49 @@ function getEnabledRiddles(system) {
     .filter((riddle) => riddle.enabled !== false);
 }
 
+function hasValidRiddleOrder(riddles) {
+  if (!Array.isArray(state.order) || state.order.length !== riddles.length) return false;
+
+  const enabledIndexes = new Set(riddles.map((riddle) => riddle.sourceIndex));
+  const orderedIndexes = new Set(state.order.map(Number));
+
+  if (enabledIndexes.size !== orderedIndexes.size) return false;
+  return state.order.every((index) => enabledIndexes.has(Number(index)));
+}
+
+function shuffleIndexes(indexes) {
+  const shuffled = [...indexes];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const target = randomIndex(index + 1);
+    [shuffled[index], shuffled[target]] = [shuffled[target], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
+function shuffleActiveRiddles() {
+  const enabledRiddles = getEnabledRiddles(getActiveSystem());
+  state.order = shuffleIndexes(enabledRiddles.map((riddle) => riddle.sourceIndex));
+}
+
+function ensureRiddleOrder() {
+  const enabledRiddles = getEnabledRiddles(getActiveSystem());
+
+  if (!hasValidRiddleOrder(enabledRiddles)) {
+    state.order = [];
+  }
+}
+
 function getActiveRiddles() {
-  return getEnabledRiddles(getActiveSystem());
+  const enabledRiddles = getEnabledRiddles(getActiveSystem());
+
+  if (!hasValidRiddleOrder(enabledRiddles)) {
+    return enabledRiddles;
+  }
+
+  const riddlesByIndex = new Map(enabledRiddles.map((riddle) => [riddle.sourceIndex, riddle]));
+  return state.order.map((index) => riddlesByIndex.get(Number(index))).filter(Boolean);
 }
 
 function saveState() {
@@ -756,6 +801,7 @@ function saveState() {
   localStorage.setItem(storage.found, JSON.stringify(state.found));
   localStorage.setItem(storage.jokers, String(state.jokers));
   localStorage.setItem(storage.spins, JSON.stringify(state.wheelSpins));
+  localStorage.setItem(storage.order, JSON.stringify(state.order));
   queueSyncPush();
 }
 
@@ -1275,6 +1321,7 @@ function resetGame(render = true) {
   state.found = [];
   state.jokers = 0;
   state.wheelSpins = {};
+  shuffleActiveRiddles();
   saveState();
 
   if (render) {
@@ -1358,6 +1405,12 @@ document.addEventListener("click", (event) => {
 
   if (action === "start") {
     if (!updateMissionLockMessage()) return;
+    if (state.current === 0 && state.found.length === 0) {
+      if (!hasValidRiddleOrder(getEnabledRiddles(getActiveSystem()))) {
+        shuffleActiveRiddles();
+        saveState();
+      }
+    }
     showScreen(state.current >= getActiveRiddles().length ? "final" : "play");
   }
 
@@ -1409,6 +1462,7 @@ document.addEventListener("click", (event) => {
 });
 
 renderMemoryList();
+ensureRiddleOrder();
 renderMissionSettings();
 updateMissionLockMessage();
 startSync();
