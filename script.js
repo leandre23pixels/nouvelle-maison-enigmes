@@ -1037,7 +1037,11 @@ function renderPrepCards(systemId) {
     secret.className = "prep-secret";
     secret.textContent = `BRAVO ! Code: ${titleCaseSecret(riddle.secret)}`;
 
-    card.append(badge, title, riddleCopy, hint, secret);
+    const prepNote = document.createElement("p");
+    prepNote.className = "print-prep-note";
+    prepNote.textContent = `Preparation: ${riddle.prep}`;
+
+    card.append(badge, title, riddleCopy, hint, secret, prepNote);
 
     if (usesUnknownLanguage) {
       const cipherNote = document.createElement("p");

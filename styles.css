@@ -931,6 +931,13 @@ h2 {
   font-weight: 850;
 }
 
+.print-prep-note {
+  padding-top: 6px;
+  border-top: 1px dashed rgba(25, 24, 23, 0.2);
+  font-size: 0.82rem;
+  font-weight: 760;
+}
+
 .prep-card strong {
   color: var(--wine);
 }
@@ -1306,8 +1313,8 @@ h2 {
   }
 
   .prep-grid {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 3mm;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2mm;
     padding: 0;
   }
 
@@ -1315,14 +1322,14 @@ h2 {
     break-inside: avoid;
     min-height: 0;
     gap: 0;
-    padding: 3mm;
+    padding: 2mm;
     border: 1px solid #222;
     border-radius: 4px;
     box-shadow: none;
     background: #fff;
   }
 
-  .prep-card > :not(.prep-secret) {
+  .prep-card > :not(.prep-secret):not(.print-prep-note) {
     display: none !important;
   }
 
@@ -1371,12 +1378,23 @@ h2 {
 
   .prep-secret {
     width: 100%;
-    padding: 6px 5px;
+    padding: 4px 3px;
     color: #fff;
     background: #111;
-    font-size: 0.68rem;
+    font-size: 0.54rem;
     text-align: center;
     line-height: 1.15;
+  }
+
+  .print-prep-note {
+    display: block !important;
+    margin-top: 1.4mm !important;
+    padding-top: 1.4mm;
+    border-top: 1px dashed #bbb;
+    color: #111 !important;
+    font-size: 0.46rem !important;
+    line-height: 1.08 !important;
+    font-weight: 700;
   }
 
   .cipher-print-note {
