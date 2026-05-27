@@ -1313,18 +1313,18 @@ h2 {
   }
 
   .prep-grid {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 2mm;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2.2mm;
     padding: 0;
   }
 
   .prep-card {
     break-inside: avoid;
-    min-height: 0;
+    min-height: 22mm;
     gap: 0;
-    padding: 2mm;
+    padding: 2.4mm;
     border: 1px solid #222;
-    border-radius: 4px;
+    border-radius: 5px;
     box-shadow: none;
     background: #fff;
   }
@@ -1378,22 +1378,22 @@ h2 {
 
   .prep-secret {
     width: 100%;
-    padding: 4px 3px;
+    padding: 5px 4px;
     color: #fff;
     background: #111;
-    font-size: 0.54rem;
+    font-size: 0.62rem;
     text-align: center;
-    line-height: 1.15;
+    line-height: 1.16;
   }
 
   .print-prep-note {
     display: block !important;
-    margin-top: 1.4mm !important;
-    padding-top: 1.4mm;
+    margin-top: 1.6mm !important;
+    padding-top: 1.6mm;
     border-top: 1px dashed #bbb;
     color: #111 !important;
-    font-size: 0.46rem !important;
-    line-height: 1.08 !important;
+    font-size: 0.54rem !important;
+    line-height: 1.1 !important;
     font-weight: 700;
   }
 
